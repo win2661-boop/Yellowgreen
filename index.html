@@ -5,75 +5,68 @@
     <title>우리 가족 깊이이음 연표</title>
     <style>
         body { font-family: 'Nanum Gothic', sans-serif; background-color: #f0f7ff; padding: 20px; text-align: center; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+        .container { max-width: 850px; margin: auto; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
         h1 { color: #4a90e2; }
-        input, select { padding: 8px; margin: 5px; border-radius: 10px; border: 2px solid #b3d7ff; }
+        input, select { padding: 8px; margin: 2px; border-radius: 10px; border: 2px solid #b3d7ff; }
         table { width: 100%; margin-top: 20px; border-collapse: collapse; }
-        th, td { border: 1px solid #cce5ff; padding: 10px; text-align: center; }
-        button { margin: 10px; padding: 12px 20px; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: bold; }
-        #addBtn { background-color: #50c878; }
-        #sortBtn { background-color: #4a90e2; }
-        #saveBtn { background-color: #ff9f43; }
+        th, td { border: 1px solid #cce5ff; padding: 8px; text-align: center; }
+        .move-btn { cursor: pointer; border: none; background: #eef; border-radius: 5px; padding: 5px; font-weight: bold; }
+        #saveBtn { margin-top: 20px; padding: 15px 30px; background-color: #ff9f43; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: bold; font-size: 1.1em; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
 <div class="container" id="capture">
-    <input type="text" id="nameInput" placeholder="가족 이름 (예: 김철수)" oninput="updateTitle()">
+    <input type="text" id="nameInput" placeholder="가족 이름 (예: 김철수)" oninput="updateTitle()" style="width: 200px;">
     <h1><span id="displayName">000</span>네 가족 연표</h1>
 
     <table id="timelineTable">
         <thead>
-            <tr><th>연도</th><th>가족의 중요한 일</th><th>이유</th><th>감정</th></tr>
+            <tr><th>순서</th><th>연도</th><th>가족의 중요한 일</th><th>이유</th><th>감정</th></tr>
         </thead>
         <tbody id="tableBody">
-            <tr class="row">
-                <td><select class="year">
-                    <script>for(let i=2026; i>=2013; i--) document.write(`<option value="${i}">${i}년</option>`);</script>
-                </select></td>
-                <td><input type="text" placeholder="일 내용"></td>
-                <td><input type="text" placeholder="이유"></td>
-                <td><select class="emotion">
-                    <option value="😊 기쁨">😊 기쁨</option><option value="😆 즐거움">😆 즐거움</option>
-                    <option value="🥰 사랑">🥰 사랑</option><option value="🤩 감동">🤩 감동</option>
-                    <option value="😢 슬픔">😢 슬픔</option><option value="😡 화남">😡 화남</option>
-                    <option value="😨 무서움">😨 무서움</option><option value="😟 걱정">😟 걱정</option>
-                    <option value="😑 서운함">😑 서운함</option><option value="😎 뿌듯함">😎 뿌듯함</option>
-                </select></td>
-            </tr>
-        </tbody>
+            </tbody>
     </table>
+    <br>
+    <button id="saveBtn" onclick="downloadImage()">이미지로 저장하기</button>
 </div>
 
-<button id="addBtn" onclick="addRow()">+ 기록 추가하기</button>
-<button id="sortBtn" onclick="sortRows()">시간 순서대로 나타내기</button>
-<button id="saveBtn" onclick="downloadImage()">이미지로 저장하기</button>
-
 <script>
+    // 5행 생성
+    const tbody = document.getElementById('tableBody');
+    for(let i=0; i<5; i++) {
+        let row = tbody.insertRow();
+        row.innerHTML = `
+            <td>
+                <button class="move-btn" onclick="moveRow(this, -1)">▲</button>
+                <button class="move-btn" onclick="moveRow(this, 1)">▼</button>
+            </td>
+            <td><select class="year">${Array.from({length:14}, (_,j) => `<option value="${2026-j}">${2026-j}년</option>`).join('')}</select></td>
+            <td><input type="text" placeholder="내용" style="width:120px"></td>
+            <td><input type="text" placeholder="이유" style="width:120px"></td>
+            <td><select class="emotion">
+                <option value="😊 기쁨">😊 기쁨</option><option value="😆 즐거움">😆 즐거움</option>
+                <option value="🥰 사랑">🥰 사랑</option><option value="🤩 감동">🤩 감동</option>
+                <option value="😢 슬픔">😢 슬픔</option><option value="😡 화남">😡 화남</option>
+                <option value="😨 무서움">😨 무서움</option><option value="😟 걱정">😟 걱정</option>
+                <option value="😑 서운함">😑 서운함</option><option value="😎 뿌듯함">😎 뿌듯함</option>
+            </select></td>`;
+    }
+
     function updateTitle() {
         document.getElementById('displayName').innerText = document.getElementById('nameInput').value || '000';
     }
 
-    function addRow() {
-        let tbody = document.getElementById('tableBody');
-        if (tbody.rows.length < 10) {
-            let row = tbody.insertRow();
-            row.innerHTML = `<td><select class="year">${Array.from({length:14}, (_,i) => `<option value="${2026-i}">${2026-i}년</option>`).join('')}</select></td>
-                             <td><input type="text" placeholder="일 내용"></td>
-                             <td><input type="text" placeholder="이유"></td>
-                             <td><select class="emotion">${document.querySelector('.emotion').innerHTML}</select></td>`;
-        } else {
-            alert("최대 10개까지만 기록할 수 있어요!");
+    function moveRow(btn, direction) {
+        let row = btn.parentNode.parentNode;
+        let index = row.rowIndex;
+        let table = document.getElementById("timelineTable");
+        let newIndex = index + direction;
+        
+        if (newIndex > 0 && newIndex < table.rows.length) {
+            table.tBodies[0].insertBefore(direction === -1 ? row : row.nextSibling, direction === -1 ? row.previousSibling : row.nextSibling.nextSibling);
         }
-    }
-
-    function sortRows() {
-        let tbody = document.getElementById('tableBody');
-        let rows = Array.from(tbody.rows);
-        // 정렬 기준 변경: 오래된 연도(작은 숫자)가 위로 오도록
-        rows.sort((a, b) => a.querySelector('.year').value - b.querySelector('.year').value);
-        rows.forEach(row => tbody.appendChild(row));
     }
 
     function downloadImage() {
