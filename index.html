@@ -12,37 +12,41 @@
         th, td { border: 1px solid #cce5ff; padding: 8px; text-align: center; }
         .move-btn { cursor: pointer; border: none; background: #eef; border-radius: 5px; padding: 5px; font-weight: bold; }
         .action-btn { margin: 10px; padding: 12px 20px; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: bold; }
-        #impBtn { background-color: #e67e22; }
-        #timeBtn { background-color: #4a90e2; }
-        #saveBtn { background-color: #27ae60; }
-        .inquiry-area { margin-top: 30px; text-align: left; padding: 15px; border-top: 2px dashed #4a90e2; }
+        .interaction-box { margin-top: 30px; text-align: left; padding: 15px; border: 2px solid #4a90e2; border-radius: 15px; background-color: #f9fbff; }
+        #sendBtn { background-color: #e74c3c; margin-top: 20px; padding: 15px 30px; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: bold; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
 <div class="container" id="capture">
-    <input type="text" id="nameInput" placeholder="가족 이름 (예: 김철수)" oninput="updateTitle()" style="width: 200px;">
+    <input type="text" id="nameInput" placeholder="이름 (예: 김철수)" oninput="updateTitle()" style="width: 200px;">
     <h1><span id="displayName">000</span>네 가족 연표</h1>
 
     <table id="timelineTable">
         <thead>
             <tr><th>순서 이동</th><th>연도</th><th>가족의 중요한 일</th><th>이유</th><th>감정</th></tr>
         </thead>
-        <tbody id="tableBody">
-            </tbody>
+        <tbody id="tableBody"></tbody>
     </table>
 
-    <div class="inquiry-area">
-        <p><strong>탐구 질문:</strong> <input type="text" placeholder="질문을 입력하세요" style="width: 70%;"></p>
-        <p><strong>내가 생각한 답:</strong></p>
-        <textarea style="width: 95%; height: 60px;" placeholder="여기에 생각을 적어보세요."></textarea>
+    <div style="margin-top: 20px;">
+        <button class="action-btn" style="background-color: #e67e22;" onclick="restoreOriginalOrder()">1. 중요한 일 순서대로 보기</button>
+        <button class="action-btn" style="background-color: #4a90e2;" onclick="sortRowsByTime()">2. 시간의 흐름 순서대로 보기</button>
     </div>
 
-    <br>
-    <button class="action-btn" id="impBtn" onclick="restoreOriginalOrder()">1. 중요한 일 순서대로</button>
-    <button class="action-btn" id="timeBtn" onclick="sortRowsByTime()">2. 시간의 흐름 순서대로</button>
-    <button class="action-btn" id="saveBtn" onclick="downloadImage()">3. 이미지로 저장하기</button>
+    <div class="interaction-box">
+        <p><strong>👤 친구 아이콘: 친구의 가족 연표를 보고 감동적인 응원 한마디!</strong></p>
+        <textarea style="width: 95%; height: 50px;" placeholder="친구에게 힘이 되는 응원을 남겨주세요."></textarea>
+        
+        <p><strong>❓ 질문 아이콘: 친구의 가족 연표를 보고 궁금한 점 질문하기</strong></p>
+        <textarea style="width: 95%; height: 50px;" placeholder="궁금한 내용을 질문해 보세요."></textarea>
+        
+        <p><strong>✍️ 나의 대답: 친구의 질문에 대한 나의 답변</strong></p>
+        <textarea style="width: 95%; height: 50px;" placeholder="질문을 받은 친구는 여기에 답변을 달아주세요."></textarea>
+    </div>
+
+    <button id="sendBtn" onclick="sendToTeacher()">선생님께 보내기 (win2661@gmail.com)</button>
 </div>
 
 <script>
@@ -58,21 +62,20 @@
                 <button class="move-btn" onclick="moveRow(this, 1)">▼</button>
             </td>
             <td><select class="year">${Array.from({length:22}, (_,j) => `<option value="${2026-j}">${2026-j}년</option>`).join('')}</select></td>
-            <td><input type="text" placeholder="내용" style="width:120px"></td>
-            <td><input type="text" placeholder="이유" style="width:120px"></td>
+            <td><input type="text" placeholder="내용" style="width:100px"></td>
+            <td><input type="text" placeholder="이유" style="width:100px"></td>
             <td><select class="emotion">
                 <option value="😊 기쁨">😊 기쁨</option><option value="😆 즐거움">😆 즐거움</option>
                 <option value="🥰 사랑">🥰 사랑</option><option value="🤩 감동">🤩 감동</option>
                 <option value="😢 슬픔">😢 슬픔</option><option value="😡 화남">😡 화남</option>
                 <option value="😨 무서움">😨 무서움</option><option value="😟 걱정">😟 걱정</option>
                 <option value="😑 서운함">😑 서운함</option><option value="😎 뿌듯함">😎 뿌듯함</option>
+                <option value="🤔 궁금함">🤔 궁금함</option><option value="🤗 고마움">🤗 고마움</option>
             </select></td>`;
     }
     originalRows = Array.from(tbody.rows);
 
-    function updateTitle() {
-        document.getElementById('displayName').innerText = document.getElementById('nameInput').value || '000';
-    }
+    function updateTitle() { document.getElementById('displayName').innerText = document.getElementById('nameInput').value || '000'; }
 
     function moveRow(btn, direction) {
         let row = btn.parentNode.parentNode;
@@ -84,9 +87,7 @@
         }
     }
 
-    function restoreOriginalOrder() {
-        originalRows.forEach(row => tbody.appendChild(row));
-    }
+    function restoreOriginalOrder() { originalRows.forEach(row => tbody.appendChild(row)); }
 
     function sortRowsByTime() {
         let rows = Array.from(tbody.rows);
@@ -94,11 +95,19 @@
         rows.forEach(row => tbody.appendChild(row));
     }
 
-    function downloadImage() {
+    function sendToTeacher() {
         html2canvas(document.getElementById("capture")).then(canvas => {
+            let dataUrl = canvas.toDataURL();
+            let name = document.getElementById('nameInput').value || '학생';
+            let subject = encodeURIComponent(`${name}네 가족 연표 제출`);
+            let body = encodeURIComponent("작성한 연표 이미지를 첨부하거나, 아래 링크를 통해 확인해 주세요.");
+            
+            // 이메일 창 열기 (이미지를 직접 첨부하는 것은 보안상 브라우저 제한이 있어, 우선 안내창을 띄웁니다)
+            alert("이미지가 저장됩니다. 선생님 메일(win2661@gmail.com)로 이 파일을 첨부해서 보내주세요!");
+            
             let link = document.createElement('a');
-            link.download = '우리_가족_연표.png';
-            link.href = canvas.toDataURL();
+            link.download = `${name}_가족_연표.png`;
+            link.href = dataUrl;
             link.click();
         });
     }
