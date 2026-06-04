@@ -11,7 +11,10 @@
         table { width: 100%; margin-top: 20px; border-collapse: collapse; }
         th, td { border: 1px solid #cce5ff; padding: 8px; text-align: center; }
         .move-btn { cursor: pointer; border: none; background: #eef; border-radius: 5px; padding: 5px; font-weight: bold; }
-        #saveBtn { margin-top: 20px; padding: 15px 30px; background-color: #ff9f43; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: bold; font-size: 1.1em; }
+        .action-btn { margin: 10px; padding: 12px 20px; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: bold; }
+        #impBtn { background-color: #e67e22; } /* 중요한 일 순서 */
+        #timeBtn { background-color: #4a90e2; } /* 시간의 흐름 */
+        #saveBtn { background-color: #27ae60; } /* 이미지 저장 */
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -23,17 +26,18 @@
 
     <table id="timelineTable">
         <thead>
-            <tr><th>순서</th><th>연도</th><th>가족의 중요한 일</th><th>이유</th><th>감정</th></tr>
+            <tr><th>순서 이동</th><th>연도</th><th>가족의 중요한 일</th><th>이유</th><th>감정</th></tr>
         </thead>
         <tbody id="tableBody">
             </tbody>
     </table>
     <br>
-    <button id="saveBtn" onclick="downloadImage()">이미지로 저장하기</button>
+    <button class="action-btn" id="impBtn" onclick="alert('학생이 직접 화살표(▲, ▼)를 눌러 중요도 순으로 배치해주세요!')">1. 중요한 일 순서대로</button>
+    <button class="action-btn" id="timeBtn" onclick="sortRowsByTime()">2. 시간의 흐름 순서대로</button>
+    <button class="action-btn" id="saveBtn" onclick="downloadImage()">3. 이미지로 저장하기</button>
 </div>
 
 <script>
-    // 5행 생성
     const tbody = document.getElementById('tableBody');
     for(let i=0; i<5; i++) {
         let row = tbody.insertRow();
@@ -42,7 +46,7 @@
                 <button class="move-btn" onclick="moveRow(this, -1)">▲</button>
                 <button class="move-btn" onclick="moveRow(this, 1)">▼</button>
             </td>
-            <td><select class="year">${Array.from({length:14}, (_,j) => `<option value="${2026-j}">${2026-j}년</option>`).join('')}</select></td>
+            <td><select class="year">${Array.from({length:22}, (_,j) => `<option value="${2026-j}">${2026-j}년</option>`).join('')}</select></td>
             <td><input type="text" placeholder="내용" style="width:120px"></td>
             <td><input type="text" placeholder="이유" style="width:120px"></td>
             <td><select class="emotion">
@@ -58,15 +62,21 @@
         document.getElementById('displayName').innerText = document.getElementById('nameInput').value || '000';
     }
 
+    // 위아래 이동
     function moveRow(btn, direction) {
         let row = btn.parentNode.parentNode;
-        let index = row.rowIndex;
         let table = document.getElementById("timelineTable");
-        let newIndex = index + direction;
-        
+        let newIndex = row.rowIndex + direction;
         if (newIndex > 0 && newIndex < table.rows.length) {
             table.tBodies[0].insertBefore(direction === -1 ? row : row.nextSibling, direction === -1 ? row.previousSibling : row.nextSibling.nextSibling);
         }
+    }
+
+    // 시간 순 정렬
+    function sortRowsByTime() {
+        let rows = Array.from(tbody.rows);
+        rows.sort((a, b) => a.querySelector('.year').value - b.querySelector('.year').value);
+        rows.forEach(row => tbody.appendChild(row));
     }
 
     function downloadImage() {
