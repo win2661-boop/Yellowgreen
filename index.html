@@ -10,7 +10,7 @@
         input, select, textarea { padding: 8px; margin: 2px; border-radius: 5px; border: 1px solid #b3d7ff; width: 95%; box-sizing: border-box; }
         table { width: 100%; margin-top: 20px; border-collapse: collapse; }
         th, td { border: 1px solid #cce5ff; padding: 10px; text-align: center; }
-        .move-btn { cursor: pointer; border: none; background: #eef; border-radius: 5px; padding: 5px 10px; font-weight: bold; margin: 2px; }
+        .move-btn { cursor: pointer; border: none; background: #eef; border-radius: 5px; padding: 5px 10px; font-weight: bold; }
         .action-btn { margin: 10px; padding: 12px 20px; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: bold; }
         .interaction-box { margin-top: 30px; text-align: left; padding: 15px; border: 2px solid #4a90e2; border-radius: 15px; background-color: #f9fbff; }
         #saveBtn { background-color: #27ae60; margin-top: 30px; padding: 20px 40px; border: none; border-radius: 15px; color: white; cursor: pointer; font-weight: bold; font-size: 1.2em; }
@@ -62,7 +62,7 @@
     const tbody = document.getElementById('tableBody');
     let fixedOrder = [];
 
-    // 5행 생성
+    // 5행을 확실하게 생성
     for(let i=0; i<5; i++) {
         let row = tbody.insertRow();
         row.innerHTML = `
@@ -79,10 +79,4 @@
                 <option value="🥰 사랑">🥰 사랑</option><option value="🤩 감동">🤩 감동</option>
                 <option value="😢 슬픔">😢 슬픔</option><option value="😡 화남">😡 화남</option>
                 <option value="😨 무서움">😨 무서움</option><option value="😟 걱정">😟 걱정</option>
-                <option value="😑 서운함">😑 서운함</option><option value="😎 뿌듯함">😎 뿌듯함</option>
-                <option value="🤔 궁금함">🤔 궁금함</option><option value="🤗 고마움">🤗 고마움</option>
-            </select></td>`;
-    }
-    fixedOrder = Array.from(tbody.rows);
-
-    function updateTitle() { document
+                <option value="😑 서운함">😑 서운함</option><option value="😎 뿌
