@@ -13,7 +13,7 @@
         .move-btn { cursor: pointer; border: none; background: #eef; border-radius: 5px; padding: 5px; font-weight: bold; }
         .action-btn { margin: 10px; padding: 12px 20px; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: bold; }
         .interaction-box { margin-top: 30px; text-align: left; padding: 15px; border: 2px solid #4a90e2; border-radius: 15px; background-color: #f9fbff; }
-        #sendBtn { background-color: #e74c3c; margin-top: 30px; padding: 20px 40px; border: none; border-radius: 15px; color: white; cursor: pointer; font-weight: bold; font-size: 1.2em; }
+        #saveBtn { background-color: #27ae60; margin-top: 30px; padding: 20px 40px; border: none; border-radius: 15px; color: white; cursor: pointer; font-weight: bold; font-size: 1.2em; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -45,14 +45,14 @@
         <p><strong>✍️ 나의 대답:</strong> 친구의 질문에 대한 나의 답변</p>
         <textarea style="width: 95%; height: 50px;" placeholder="질문을 받은 친구는 여기에 답변을 달아주세요."></textarea>
         
-        <p><strong>💡 탐구 문제:</strong> <small>(예시: 시간의 흐름에 따라 정리하면 무엇을 알 수 있을까?)</small></p>
+        <p><strong>💡 탐구 문제:</strong> <small>(예: 시간의 흐름에 따라 정리하면 무엇을 알 수 있을까?)</small></p>
         <input type="text" style="width: 95%;" placeholder="탐구 문제를 직접 적어보세요.">
         
         <p><strong>📝 나의 답:</strong></p>
         <textarea style="width: 95%; height: 60px;" placeholder="탐구 문제에 대한 답을 입력해 봅시다."></textarea>
     </div>
 
-    <button id="sendBtn" onclick="sendToTeacher()">선생님께 메일 보내기 (win2661@gmail.com)</button>
+    <button id="saveBtn" onclick="downloadImage()">이미지로 저장하기</button>
 </div>
 
 <script>
@@ -99,10 +99,9 @@
         rows.forEach(row => tbody.appendChild(row));
     }
 
-    function sendToTeacher() {
+    function downloadImage() {
         html2canvas(document.getElementById("capture")).then(canvas => {
             let name = document.getElementById('nameInput').value || '학생';
-            alert("이미지가 저장됩니다! 선생님 메일(win2661@gmail.com)로 이 파일을 첨부해서 꼭 보내주세요.");
             let link = document.createElement('a');
             link.download = `${name}_가족_연표.png`;
             link.href = canvas.toDataURL();
