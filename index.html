@@ -7,10 +7,10 @@
         body { font-family: 'Nanum Gothic', sans-serif; background-color: #f0f7ff; padding: 20px; text-align: center; }
         .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
         h1 { color: #4a90e2; }
-        input, select, textarea { padding: 8px; margin: 2px; border-radius: 5px; border: 1px solid #b3d7ff; width: 95%; box-sizing: border-box; }
+        input, select, textarea { padding: 8px; margin: 5px; border-radius: 10px; border: 2px solid #b3d7ff; }
         table { width: 100%; margin-top: 20px; border-collapse: collapse; }
-        th, td { border: 1px solid #cce5ff; padding: 10px; text-align: center; }
-        .move-btn { cursor: pointer; border: none; background: #eef; border-radius: 5px; padding: 5px 10px; font-weight: bold; }
+        th, td { border: 1px solid #cce5ff; padding: 8px; text-align: center; }
+        .move-btn { cursor: pointer; border: none; background: #eef; border-radius: 5px; padding: 5px; font-weight: bold; }
         .action-btn { margin: 10px; padding: 12px 20px; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: bold; }
         .interaction-box { margin-top: 30px; text-align: left; padding: 15px; border: 2px solid #4a90e2; border-radius: 15px; background-color: #f9fbff; }
         #saveBtn { background-color: #27ae60; margin-top: 30px; padding: 20px 40px; border: none; border-radius: 15px; color: white; cursor: pointer; font-weight: bold; font-size: 1.2em; }
@@ -20,7 +20,7 @@
 <body>
 
 <div class="container" id="capture">
-    <input type="text" id="nameInput" placeholder="이름을 입력하세요 (예: 김철수)" oninput="updateTitle()" style="width: 300px; font-size: 1.2em;">
+    <input type="text" id="nameInput" placeholder="이름 (예: 김철수)" oninput="updateTitle()" style="width: 200px;">
     <h1><span id="displayName">000</span>네 가족 연표</h1>
 
     <table id="timelineTable">
@@ -39,20 +39,20 @@
     </div>
 
     <div class="interaction-box">
-        <p><strong>👤 친구의 응원:</strong> 친구의 가족 연표를 보고 감동적인 응원 한마디!</p>
-        <textarea placeholder="친구에게 힘이 되는 응원을 남겨주세요."></textarea>
+        <p><strong>👤 친구 아이콘:</strong> 친구의 가족 연표를 보고 감동적인 응원 한마디!</p>
+        <textarea style="width: 95%; height: 50px;" placeholder="친구에게 힘이 되는 응원을 남겨주세요."></textarea>
         
-        <p><strong>❓ 친구의 질문:</strong> 친구의 가족 연표를 보고 궁금한 점 질문하기</p>
-        <textarea placeholder="궁금한 내용을 질문해 보세요."></textarea>
+        <p><strong>❓ 질문 아이콘:</strong> 친구의 가족 연표를 보고 궁금한 점 질문하기</p>
+        <textarea style="width: 95%; height: 50px;" placeholder="궁금한 내용을 질문해 보세요."></textarea>
         
         <p><strong>✍️ 나의 대답:</strong> 친구의 질문에 대한 나의 답변</p>
-        <textarea placeholder="질문을 받은 친구는 여기에 답변을 달아주세요."></textarea>
+        <textarea style="width: 95%; height: 50px;" placeholder="질문을 받은 친구는 여기에 답변을 달아주세요."></textarea>
         
         <p><strong>💡 탐구 질문:</strong> <small>(예: 시간의 흐름에 따라 나타내면 무엇을 알 수 있을까요?)</small></p>
-        <input type="text" placeholder="탐구 문제를 직접 적어보세요.">
+        <input type="text" style="width: 95%;" placeholder="탐구 문제를 직접 적어보세요.">
         
         <p><strong>📝 나의 답:</strong></p>
-        <textarea placeholder="탐구 문제에 대한 답을 입력해 봅시다."></textarea>
+        <textarea style="width: 95%; height: 60px;" placeholder="탐구 문제에 대한 답을 입력해 봅시다."></textarea>
     </div>
 
     <button id="saveBtn" onclick="downloadImage()">이미지로 저장하기</button>
@@ -62,7 +62,7 @@
     const tbody = document.getElementById('tableBody');
     let fixedOrder = [];
 
-    // 5행을 확실하게 생성
+    // 5행 생성
     for(let i=0; i<5; i++) {
         let row = tbody.insertRow();
         row.innerHTML = `
@@ -71,12 +71,48 @@
                 <button class="move-btn" onclick="moveRow(this, 1)">▼</button>
             </td>
             <td><select class="year">${Array.from({length:22}, (_,j) => `<option value="${2026-j}">${2026-j}년</option>`).join('')}</select></td>
-            <td><input type="text" placeholder="예: 부모님 결혼"></td>
-            <td><input type="text" placeholder="전에는~"></td>
-            <td><input type="text" placeholder="후에는~"></td>
+            <td><input type="text" placeholder="중요한 일" style="width:110px"></td>
+            <td><input type="text" placeholder="그 전에는~" style="width:110px"></td>
+            <td><input type="text" placeholder="그 후에는~" style="width:110px"></td>
             <td><select class="emotion">
                 <option value="😊 기쁨">😊 기쁨</option><option value="😆 즐거움">😆 즐거움</option>
                 <option value="🥰 사랑">🥰 사랑</option><option value="🤩 감동">🤩 감동</option>
                 <option value="😢 슬픔">😢 슬픔</option><option value="😡 화남">😡 화남</option>
                 <option value="😨 무서움">😨 무서움</option><option value="😟 걱정">😟 걱정</option>
-                <option value="😑 서운함">😑 서운함</option><option value="😎 뿌
+                <option value="😑 서운함">😑 서운함</option><option value="😎 뿌듯함">😎 뿌듯함</option>
+                <option value="🤔 궁금함">🤔 궁금함</option><option value="🤗 고마움">🤗 고마움</option>
+            </select></td>`;
+    }
+    fixedOrder = Array.from(tbody.rows);
+
+    function updateTitle() { document.getElementById('displayName').innerText = document.getElementById('nameInput').value || '000'; }
+
+    function moveRow(btn, direction) {
+        let row = btn.parentNode.parentNode;
+        let newIndex = row.rowIndex + direction;
+        if (newIndex > 0 && newIndex < tbody.rows.length + 1) {
+            tbody.insertBefore(direction === -1 ? row : row.nextSibling, direction === -1 ? row.previousSibling : row.nextSibling.nextSibling);
+            fixedOrder = Array.from(tbody.rows);
+        }
+    }
+
+    function restoreOriginalOrder() { fixedOrder.forEach(row => tbody.appendChild(row)); }
+
+    function sortRowsByTime() {
+        let rows = Array.from(tbody.rows);
+        rows.sort((a, b) => a.querySelector('.year').value - b.querySelector('.year').value);
+        rows.forEach(row => tbody.appendChild(row));
+    }
+
+    function downloadImage() {
+        html2canvas(document.getElementById("capture")).then(canvas => {
+            let name = document.getElementById('nameInput').value || '학생';
+            let link = document.createElement('a');
+            link.download = `${name}_가족_연표.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    }
+</script>
+</body>
+</html>
