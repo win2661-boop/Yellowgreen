@@ -51,7 +51,8 @@
 
 <script>
     const tbody = document.getElementById('tableBody');
-    let originalRows = [];
+    // 처음 입력한 순서를 절대 변하지 않게 저장하는 변수
+    let fixedOrder = [];
 
     // 5행 생성
     for(let i=0; i<5; i++) {
@@ -73,24 +74,30 @@
                 <option value="🤔 궁금함">🤔 궁금함</option><option value="🤗 고마움">🤗 고마움</option>
             </select></td>`;
     }
-    originalRows = Array.from(tbody.rows);
+    // 페이지 로드 시점의 순서를 고정
+    fixedOrder = Array.from(tbody.rows);
 
     function updateTitle() { document.getElementById('displayName').innerText = document.getElementById('nameInput').value || '000'; }
 
     function moveRow(btn, direction) {
         let row = btn.parentNode.parentNode;
-        let table = document.getElementById("timelineTable");
         let newIndex = row.rowIndex + direction;
-        if (newIndex > 0 && newIndex < table.rows.length) {
-            table.tBodies[0].insertBefore(direction === -1 ? row : row.nextSibling, direction === -1 ? row.previousSibling : row.nextSibling.nextSibling);
-            originalRows = Array.from(tbody.rows);
+        if (newIndex > 0 && newIndex < tbody.rows.length + 1) {
+            tbody.insertBefore(direction === -1 ? row : row.nextSibling, direction === -1 ? row.previousSibling : row.nextSibling.nextSibling);
+            // 사용자가 수동으로 옮긴 순서도 "중요한 순서"로 업데이트
+            fixedOrder = Array.from(tbody.rows);
         }
     }
 
-    function restoreOriginalOrder() { originalRows.forEach(row => tbody.appendChild(row)); }
+    // 1. 중요한 순서대로 보기 (처음 배치 혹은 수동 정렬 반영)
+    function restoreOriginalOrder() {
+        fixedOrder.forEach(row => tbody.appendChild(row));
+    }
 
+    // 2. 시간의 흐름 순서대로 보기 (오래된 순)
     function sortRowsByTime() {
         let rows = Array.from(tbody.rows);
+        // 연도 값이 낮은(오래된) 순서대로 정렬
         rows.sort((a, b) => a.querySelector('.year').value - b.querySelector('.year').value);
         rows.forEach(row => tbody.appendChild(row));
     }
@@ -99,12 +106,7 @@
         html2canvas(document.getElementById("capture")).then(canvas => {
             let dataUrl = canvas.toDataURL();
             let name = document.getElementById('nameInput').value || '학생';
-            let subject = encodeURIComponent(`${name}네 가족 연표 제출`);
-            let body = encodeURIComponent("작성한 연표 이미지를 첨부하거나, 아래 링크를 통해 확인해 주세요.");
-            
-            // 이메일 창 열기 (이미지를 직접 첨부하는 것은 보안상 브라우저 제한이 있어, 우선 안내창을 띄웁니다)
             alert("이미지가 저장됩니다. 선생님 메일(win2661@gmail.com)로 이 파일을 첨부해서 보내주세요!");
-            
             let link = document.createElement('a');
             link.download = `${name}_가족_연표.png`;
             link.href = dataUrl;
