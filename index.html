@@ -32,13 +32,16 @@
             </tbody>
     </table>
     <br>
-    <button class="action-btn" id="impBtn" onclick="alert('학생이 직접 화살표(▲, ▼)를 눌러 중요도 순으로 배치해주세요!')">1. 중요한 일 순서대로</button>
+    <button class="action-btn" id="impBtn" onclick="restoreOriginalOrder()">1. 중요한 일 순서대로</button>
     <button class="action-btn" id="timeBtn" onclick="sortRowsByTime()">2. 시간의 흐름 순서대로</button>
     <button class="action-btn" id="saveBtn" onclick="downloadImage()">3. 이미지로 저장하기</button>
 </div>
 
 <script>
     const tbody = document.getElementById('tableBody');
+    let originalRows = []; // 초기 순서 저장용
+
+    // 5행 생성
     for(let i=0; i<5; i++) {
         let row = tbody.insertRow();
         row.innerHTML = `
@@ -57,22 +60,30 @@
                 <option value="😑 서운함">😑 서운함</option><option value="😎 뿌듯함">😎 뿌듯함</option>
             </select></td>`;
     }
+    // 초기 로딩 후 순서 저장
+    originalRows = Array.from(tbody.rows);
 
     function updateTitle() {
         document.getElementById('displayName').innerText = document.getElementById('nameInput').value || '000';
     }
 
-    // 위아래 이동
     function moveRow(btn, direction) {
         let row = btn.parentNode.parentNode;
         let table = document.getElementById("timelineTable");
         let newIndex = row.rowIndex + direction;
         if (newIndex > 0 && newIndex < table.rows.length) {
             table.tBodies[0].insertBefore(direction === -1 ? row : row.nextSibling, direction === -1 ? row.previousSibling : row.nextSibling.nextSibling);
+            // 순서가 수동으로 바뀌면 originalRows도 갱신
+            originalRows = Array.from(tbody.rows);
         }
     }
 
-    // 시간 순 정렬
+    // 1. 중요한 일 순서(원래 배치한 순서)로 복구
+    function restoreOriginalOrder() {
+        originalRows.forEach(row => tbody.appendChild(row));
+    }
+
+    // 2. 시간 순 정렬
     function sortRowsByTime() {
         let rows = Array.from(tbody.rows);
         rows.sort((a, b) => a.querySelector('.year').value - b.querySelector('.year').value);
